@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-100: #3F51B5;
+  --primary-200: #757de8;
+  --primary-300: #dedeff;
+  --accent-100: #FF4081;
+  --accent-200: #ffe4ff;
+  --text-100: #333333;
+  --text-200: #5c5c5c;
+  --bg-100: #F5F5F5;
+  --bg-200: #ebebeb;
+  --bg-300: #c2c2c2;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--bg-100)] text-[var(--text-100)];
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[var(--primary-100)] text-white px-6 py-3 rounded-lg hover:bg-[var(--primary-200)] transition-colors;
+  }
+  
+  .card {
+    @apply bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow;
+  }
+}
