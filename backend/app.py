@@ -1,40 +1,46 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+import openai
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Enable Cross-Origin Resource Sharing (CORS)
 
-@app.route('/api/check-solution', methods=['POST'])
-def check_solution():
-    data = request.json
-    exercise_id = data.get('exerciseId')
-    user_code = data.get('code')
-    
-    # In a real application, you would:
-    # 1. Parse the code
-    # 2. Run it against test cases
-    # 3. Compare with expected output
-    # 4. Return detailed feedback
-    
-    # For now, we'll return a simple response
-    return jsonify({
-        'correct': True,
-        'message': 'Solution is correct!'
-    })
+# Get API Key from .env
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# Use OpenAI's new client-based API (since `openai>=1.0.0`)
+client = openai.OpenAI(api_key=OPENAI_API_KEY)
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    data = request.json
-    message = data.get('message')
-    
-    # In a real application, you would:
-    # 1. Process the message
-    # 2. Call your AI service
-    # 3. Return the response
-    
-    return jsonify({
-        'response': f"I understand you're asking about: {message}. [AI response would go here]"
-    })
+    data = request.get_json()
+    user_message = data.get('message', '')
+
+    if not user_message:
+        return jsonify({"error": "Message is required"}), 400
+
+    if not OPENAI_API_KEY:
+        return jsonify({"error": "Missing OpenAI API Key"}), 500
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a helpful AI tutor."},
+                {"role": "user", "content": user_message}
+            ],
+            max_tokens=150
+        )
+
+        return jsonify({"reply": response.choices[0].message.content})
+
+    except openai.OpenAIError as e:  # ✅ FIXED ERROR HANDLING
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5001, debug=True)
