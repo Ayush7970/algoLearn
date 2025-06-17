@@ -14,6 +14,12 @@ Algorithm Learning Platform is an **interactive web application** designed to he
 
 ---
 
+## 🖼 **Project Images**
+
+![Project Image 1](./img10.jpg)
+
+---
+
 ## 🛠 **Tech Stack**
 - **Frontend**: React, Vite, TypeScript, Tailwind CSS  
 - **Backend**: Flask, Python  
